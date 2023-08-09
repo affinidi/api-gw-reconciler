@@ -2,22 +2,16 @@
 
 name: security
 on:
-  pull_request_target:
-    types:
-      - labeled
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
+  pull_request: {}
+  workflow_dispatch: {}
 jobs:
-  approve:
-    runs-on: ubuntu-latest
+  security:
     permissions:
       contents: read
       checks: read
       statuses: read
       security-events: write
-    steps:
-      - uses: affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit
-        with:
-          config-path: .github/labeler.yml
+    uses: affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit
+    with:
+      config-path: .github/labeler.yml
+    secrets: inherit

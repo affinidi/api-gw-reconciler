@@ -38,7 +38,6 @@ export const DEFAULT_HEADER_SCHEMA: OpenAPIDefinitionHeader = {
     version: '1.0.0',
     description: 'Central API GW',
   },
-  //   openapi: '',
 }
 
 export const DEFAULT_API_DOC_PATH_PREFIX = `api-docs`

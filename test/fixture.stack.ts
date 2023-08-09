@@ -1,5 +1,5 @@
 /**
- * This file for local testing. 
+ * This file for local testing.
  * Example:
  * cdk deploy --app 'npx ts-node test/fixture.stack.ts'
  */
@@ -38,11 +38,7 @@ class TestReconcilerStack extends Stack {
     this.api = new apigateway.RestApi(this, 'api')
 
     this.api.root.addMethod('ANY')
-    const restApiReference = apigateway.RestApi.fromRestApiId(
-      this,
-      'restApiReference',
-      this.api.restApiId,
-    )
+    const restApiReference = apigateway.RestApi.fromRestApiId(this, 'restApiReference', this.api.restApiId)
 
     this.reconciler = new APIGWReconciler(this, 'reconciler', {
       restAPI: restApiReference,
