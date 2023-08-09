@@ -40,11 +40,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
   prettier: true,
   npmAccess: NpmAccess.PUBLIC,
 
-  
   githubOptions: {
     mergify: true,
     workflows: true,
-    
+
     mergifyOptions: {
       rules: [
         {
@@ -152,28 +151,25 @@ const security: Job = {
   runsOn: ['ubuntu-latest'],
   steps: [
     {
-      with: { "config-path": ".github/labeler.yml" },
-      uses: 'affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit'
-    }
+      with: { 'config-path': '.github/labeler.yml' },
+      uses: 'affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit',
+    },
   ],
-  permissions: { contents: JobPermission.READ, checks: JobPermission.READ, statuses: JobPermission.READ, securityEvents: JobPermission.WRITE }
-};
-
-
-const workflow = project.github!.addWorkflow("security");
-
-workflow.on({
-  pullRequestTarget: {
-    types: [
-      "labeled",
-      "opened",
-      "synchronize",
-      "reopened",
-      "ready_for_review",
-    ],
+  permissions: {
+    contents: JobPermission.READ,
+    checks: JobPermission.READ,
+    statuses: JobPermission.READ,
+    securityEvents: JobPermission.WRITE,
   },
-});
-workflow.addJobs({ approve: security });
+}
 
+const security_workflow = project.github!.addWorkflow('security')
+
+security_workflow.on({
+  pullRequest: {},
+  workflowDispatch: {},
+})
+
+security_workflow.addJobs({ security })
 
 project.synth()

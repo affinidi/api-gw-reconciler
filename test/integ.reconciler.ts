@@ -25,6 +25,4 @@ const integ = new IntegTest(app, 'ReconCilerTest', {
 })
 
 //This is not very usefull test right now, bc lambda and apidoc return too big output
-integ.assertions
-  .httpApiCall(`${stackUnderTest.api.url}/dev/kms/seeds`)
-  .expect(ExpectedResult.objectLike({}))
+integ.assertions.httpApiCall(`${stackUnderTest.api.url}/dev/kms/seeds`).expect(ExpectedResult.objectLike({}))

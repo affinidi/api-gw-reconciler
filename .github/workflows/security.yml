@@ -2,15 +2,10 @@
 
 name: security
 on:
-  pull_request_target:
-    types:
-      - labeled
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
+  pull_request: {}
+  workflow_dispatch: {}
 jobs:
-  approve:
+  security:
     runs-on: ubuntu-latest
     permissions:
       contents: read
