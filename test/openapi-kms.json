@@ -1,0 +1,809 @@
+{
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "CreateSeedResultDto": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "description": "DTO contains a result of the seed record creation"
+      },
+      "ExportSeedResultDto": {
+        "properties": {
+          "mnemonic": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "description": "DTO contains a result of the seed exporting"
+      },
+      "ListSeedResultDto": {
+        "type": "object",
+        "description": "DTO contains list of seed records",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "projectId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateKeysConfigInputDto": {
+        "properties": {
+          "derivationPath": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "derivationPath"
+        ],
+        "type": "object",
+        "description": "DTO contains configuration to create a key from the seed"
+      },
+      "ImportSeedMnemonicInputDto": {
+        "properties": {
+          "mnemonic": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "description": "DTO contains the seed entropy as mnemonic that is imported into the system"
+      },
+      "ImportSeedRawInputDto": {
+        "properties": {
+          "seedHex": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "description": "DTO contains the seed entropy as hex string that is imported into the system"
+      },
+      "CreateKeysConfigResultDto": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "description": "DTO contains result of key config creation"
+      },
+      "SignCredentialInputDto": {
+        "properties": {
+          "unsignedCredential": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "unsignedCredential"
+        ],
+        "type": "object",
+        "description": "DTO contains params to sign credential"
+      },
+      "SignCredentialResultDto": {
+        "properties": {
+          "signedCredential": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "signedCredential"
+        ],
+        "type": "object",
+        "description": "DTO contains signed credential"
+      },
+      "SignJwtInputDto": {
+        "properties": {
+          "header": {
+            "type": "object"
+          },
+          "payload": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "header",
+          "payload"
+        ],
+        "type": "object",
+        "description": "DTO contains parts of JWT to be signed"
+      },
+      "SignJwtResultDto": {
+        "properties": {
+          "jwt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "jwt"
+        ],
+        "type": "object",
+        "description": "DTO contains signed jwt"
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "Detail of an error"
+      },
+      "Error": {
+        "properties": {
+          "errorCode": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "debugId": {
+            "type": "string"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            }
+          }
+        },
+        "type": "object",
+        "description": "Error object"
+      }
+    }
+  },
+  "info": {
+    "title": "Acme Key Management Service",
+    "version": "1.0.0",
+    "description": "Acme Key Management Service",
+    "contact": {
+      "name": "Genesis Team",
+      "email": "genesis@Acme.com"
+    },
+    "x-reconciler": {
+      "pathPrefix": "kms"
+    }
+  },
+  "openapi": "3.0.0",
+  "tags": [
+    {
+      "name": "seed",
+      "description": "Operations on the seed"
+    },
+    {
+      "name": "key",
+      "description": "Operations on the configuration of the seed - key"
+    }
+  ],
+  "paths": {
+    "/seeds": {
+      "post": {
+        "operationId": "createSeed",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSeedResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "seed"
+        ],
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:key-management-service-de-GenericResourcescreateSe-u4nJG1Q5OGAZ:live-alias/invocations"
+        }
+      },
+      "get": {
+        "operationId": "listSeed",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "revoked",
+                "active"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSeedResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "seed"
+        ],
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:key-management-service-de-GenericResourceslistSeed-2D7iCRcKrBHc:live-alias/invocations"
+        }
+      }
+    },
+    "/seeds/{id}/keys": {
+      "post": {
+        "operationId": "createKey",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKeysConfigInputDto"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of seed record",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateKeysConfigResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "key"
+        ],
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:key-management-service-de-GenericResourcescreateKe-O9URcJnHzHYF:live-alias/invocations"
+        }
+      }
+    },
+    "/seeds/{id}/revoke": {
+      "patch": {
+        "operationId": "revokeSeed",
+        "description": "revokes the seed, after that the keys derived from this seed cannot be used anymore. Revoked seed id will be listed in seed list with isRevoked=true flag",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of seed record",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "seed"
+        ],
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:key-management-service-de-GenericResourcesrevokeSe-6PryCr8sVzgd:live-alias/invocations"
+        }
+      }
+    },
+    "/seeds/import": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ImportSeedMnemonicInputDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ImportSeedRawInputDto"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "importSeed",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSeedResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "seed"
+        ],
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:key-management-service-de-GenericResourcesimportSe-CPzsFyOO96nH:live-alias/invocations"
+        }
+      }
+    },
+    "/seeds/{id}/export-mnemonic": {
+      "post": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of seed to be exported",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "Export seed as a mnemonic phrase (for seed 128bit / 256bit (default)). Returns the exported seed from the service",
+        "operationId": "exportSeedAsMnemonic",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportSeedResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "seed"
+        ],
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:key-management-service-de-GenericResourcesexportSe-S4hLJD45a863:live-alias/invocations"
+        }
+      }
+    },
+    "/keys/{id}/sign-credential": {
+      "post": {
+        "operationId": "signCredential",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignCredentialInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignCredentialResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "key"
+        ],
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:key-management-service-de-GenericResourcessignCred-5tebZfxHo2A9:live-alias/invocations"
+        }
+      }
+    },
+    "/keys/{id}/sign-jwt": {
+      "post": {
+        "operationId": "signJwt",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of seed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignJwtInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignJwtResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "key"
+        ],
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:key-management-service-de-GenericResourcessignJwtL-c0dkMKhTIWPW:live-alias/invocations"
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ]
+}
