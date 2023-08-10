@@ -101,7 +101,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     dirs: [],
     ignorePatterns: ['!.projenrc.js', '*.spec.ts', '*.test.ts'],
   },
-  gitignore: ['cdk.out', 'test/integ.reconciler.ts.snapshot'],
+  gitignore: ['cdk.out', 'test/integ.reconciler.ts.snapshot', 'docs/examples/cdk.out'],
   bundledDeps: [
     '@aws-lambda-powertools/logger',
     '@aws-sdk/client-s3',
