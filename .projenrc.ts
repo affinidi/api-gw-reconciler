@@ -36,7 +36,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   release: true,
   autoMerge: false,
   package: true,
-  licensed: false,
+  licensed: true,
+  license: 'Apache-2.0',
   prettier: true,
   npmAccess: NpmAccess.PUBLIC,
 
