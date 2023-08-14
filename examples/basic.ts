@@ -455,7 +455,7 @@ class ReconcilerStack extends Stack {
 
 
 const app = new App()
-new ReconcilerStack(app, 'basic', { 
+new ReconcilerStack(app, 'BasicReoncilerStack', { 
   //Due to usage of Stack.of(scope).region, env has to be explicitly specifed
   env: {
     account: process.env.DEPLOY_ACCOUNT_ID,

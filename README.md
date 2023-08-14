@@ -2,11 +2,13 @@
 
 > AWS API gateway reconciler
 
-AWS API gateway reconciler checks and merges openapi schemas from services. reconciler is a library construct, which could be deployed as part of AWS CDK application
+AWS API gateway reconciler checks and merges openapi schemas from services.
+Reconciler is cdk library construct, which could be deployed as part of AWS CDK application
 
 ## :books: Table of Contents
 
 - [Installation](#package-installation)
+- [Features](#battery-features)
 - [Usage](#rocket-usage)
 - [Support](#hammer_and_wrench-support)
 - [Contributing](#memo-contributing)
@@ -17,7 +19,19 @@ AWS API gateway reconciler checks and merges openapi schemas from services. reco
 npm i @affinidi/api-gw-reconciler
 ```
 
+## :battery: Features
+
+* Merging openapi schemas from different services in one openapi schema and updating single API gateway
+* Checking for backwards compatibilty of schema
+* schema path authentication for specifc service path prefix
+* Pinning 1 schema to provide authorizers
+* Generates and publishes json api doc
+* Generates and publishes ReDoc HTML documentation
+* Token Auth for documentation 
+
 ## :rocket: Usage
+
+For more complex example, take a look into [examples]
 
 ```ts
 
@@ -61,6 +75,13 @@ new BucketDeployment(this, 'openapiSchemaDeployment', {
     sources: [Source.jsonData('openapi.json', oas)],
 })
 ```
+
+
+## :carpentry_saw: How it works
+
+
+Take a look into detailed [example](/examples/)
+
 
 ## :hammer_and_wrench: Support
 
