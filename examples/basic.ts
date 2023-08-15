@@ -1,7 +1,7 @@
 import { App, Aws,  CfnOutput,  Stack, StackProps } from 'aws-cdk-lib'
 import * as apigateway from 'aws-cdk-lib/aws-apigateway'
 import { Construct } from 'constructs'
-import { APIGWReconciler } from '../../src/api-gw-reconciler'
+import { APIGWReconciler } from '../src/api-gw-reconciler'
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment'
 import { Function, InlineCode, Runtime } from 'aws-cdk-lib/aws-lambda'
 import { ServicePrincipal } from 'aws-cdk-lib/aws-iam'
@@ -16,13 +16,7 @@ class ReconcilerStack extends Stack {
       super(scope, id, props)
 
       //Create API gateway normally or via RefactorSpaces
-      this.api = new apigateway.RestApi(this, 'api', {
-        deployOptions: {
-
-        }
-        
-      })
-  
+      this.api = new apigateway.RestApi(this, 'api', {})
       this.api.root.addMethod('ANY')
       const restApiReference = apigateway.RestApi.fromRestApiId(this, 'restApiReference', this.api.restApiId)
 

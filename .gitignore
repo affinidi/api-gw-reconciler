@@ -3,7 +3,6 @@
 !/.projen/tasks.json
 !/.projen/deps.json
 !/.projen/files.json
-!/.mergify.yml
 !/.github/workflows/pull-request-lint.yml
 !/.github/workflows/auto-approve.yml
 !/package.json
@@ -40,10 +39,7 @@ docs/examples/cdk.out
 junit.xml
 /coverage/
 !/.github/workflows/build.yml
-/dist/changelog.md
-/dist/version.txt
-!/.github/workflows/release.yml
-!/.github/workflows/upgrade-main.yml
+!/.github/workflows/upgrade.yml
 !/.github/pull_request_template.md
 !/.prettierignore
 !/.prettierrc.json
@@ -57,4 +53,7 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+!/.github/workflows/release.yml
+!/.releaserc.json
 !/.github/workflows/security.yml
+!/.github/dependabot.yml

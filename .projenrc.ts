@@ -1,5 +1,5 @@
-import { javascript, awscdk } from 'projen'
-import { JobCallingReusableWorkflow, JobPermission } from 'projen/lib/github/workflows-model'
+import { javascript, awscdk, JsonFile } from 'projen'
+import { Job, JobCallingReusableWorkflow, JobPermission } from 'projen/lib/github/workflows-model'
 import { NpmAccess } from 'projen/lib/javascript'
 import { TrailingComma } from 'projen/lib/javascript/prettier'
 
@@ -33,7 +33,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   constructsVersion: MIN_CONSTRUCTS_VERSION,
   jsiiVersion: JSII_VERSION,
   github: true,
-  release: true,
+  release: false,
   autoMerge: false,
   package: true,
   licensed: true,
@@ -42,50 +42,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
   npmAccess: NpmAccess.PUBLIC,
 
   githubOptions: {
-    mergify: true,
+    mergify: false,
     workflows: true,
-
-    mergifyOptions: {
-      rules: [
-        {
-          name: 'auto-approve',
-          conditions: [
-            {
-              and: [
-                'base=main',
-                'label=auto-approve',
-                '#approved-reviews-by>=1',
-                'check-success=build',
-                'check-success=package-js',
-              ],
-            },
-          ],
-          actions: {
-            queue: {
-              name: 'default',
-            },
-          },
-        },
-      ],
-      queues: [
-        {
-          name: 'default',
-          mergeMethod: 'fast-forward',
-          updateMethod: 'rebase',
-          conditions: [
-            {
-              and: ['#approved-reviews-by>=1', 'check-success=build', 'check-success=package-js'],
-            },
-          ],
-        },
-      ],
-    },
   },
 
   autoApproveUpgrades: true,
 
   autoApproveOptions: {
-    allowedUsernames: ['github-actions[bot]', 'trautonen'],
+    allowedUsernames: ['github-actions[bot]', 'maratsh'],
     label: 'auto-approve',
     secret: 'GITHUB_TOKEN',
   },
@@ -143,11 +107,105 @@ project.eslint?.addRules({
   ],
 })
 
-// project.packageTask.reset()
-// project.packageTask.exec('npx projen package-all')
-// project.addPackageIgnore('.npm/')
-//affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit
-// with:
+
+project.packageTask.reset()
+project.packageTask.exec('npx projen package-all')
+project.addPackageIgnore('.github')
+project.addPackageIgnore('.npm/')
+project.addPackageIgnore('.cdk.out/')
+project.addPackageIgnore('.coverage/')
+
+
+const release: Job = {
+  environment: {
+    name: 'publishEnv'
+  },
+  runsOn: ["ubuntu-latest"],
+  steps: [
+    {
+      name: 'Checkout',
+      uses: 'actions/checkout@v3',
+      with: { 'persist-credentials': false}
+
+    },
+    {
+      name: 'Setup Node.js',
+      uses: 'actions/setup-node@v3',
+      with: {
+       'node-version': 18,
+       'registry-url': "https://registry.npmjs.org",
+       scope: "@affinidi"
+      }
+
+    },
+    {
+      name: 'Install dependencies',
+      run: 'npm ci'
+    },
+    {
+      name: 'build',
+      run: 'npm run build'
+    },
+    {
+      name: 'release',
+      run: 'npm run semantic-release',
+      env: {
+        'NODE_AUTH_TOKEN': '${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}',
+        'GITHUB_TOKEN': '${{ secrets.PERSONAL_GITHUB_TOKEN }}'
+
+      }
+    }
+
+
+  ],
+  permissions: {
+    contents: JobPermission.READ,
+    checks: JobPermission.READ,
+    statuses: JobPermission.READ,
+    securityEvents: JobPermission.WRITE,
+    packages: JobPermission.WRITE
+  },
+
+}
+
+const release_workflow = project.github!.addWorkflow('release')
+
+release_workflow.on({
+  push: {
+    branches: ['main']
+  }
+})
+
+release_workflow.addJobs({release})
+
+new JsonFile(project, '.releaserc.json', {
+  obj: {
+    branches: ['main'],
+    plugins: [
+      '@semantic-release/commit-analyzer',
+      '@semantic-release/release-notes-generator',
+      // comment due to conflict with got (via npm-check-updates)
+      // '@semantic-release/gitlab',
+      '@semantic-release/npm',
+      [
+        '@semantic-release/git',
+        {
+          // see: https://github.com/semantic-release/git/issues/280
+          assets: [],
+          message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
+        },
+      ],
+      [
+        '@semantic-release/exec',
+        {
+          successCmd: 'echo RELEASE_TAG=v${nextRelease.version} > build.env',
+        },
+      ],
+    ],
+  },
+})
+
+
 const security: JobCallingReusableWorkflow = {
   uses: 'affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit',
   with: { 'config-path': '.github/labeler.yml' },
@@ -162,11 +220,17 @@ const security: JobCallingReusableWorkflow = {
 
 const security_workflow = project.github!.addWorkflow('security')
 
+
 security_workflow.on({
   pullRequest: {},
   workflowDispatch: {},
 })
 
 security_workflow.addJobs({ security })
+
+
+project.github?.addDependabot()
+
+
 
 project.synth()

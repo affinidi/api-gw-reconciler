@@ -4,8 +4,6 @@
 junit.xml
 /coverage/
 permissions-backup.acl
-/dist/changelog.md
-/dist/version.txt
 /test/
 /tsconfig.dev.json
 /src/
@@ -21,3 +19,7 @@ dist
 tsconfig.tsbuildinfo
 /.eslintrc.json
 !.jsii
+.github
+.npm/
+.cdk.out/
+.coverage/
