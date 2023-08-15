@@ -107,7 +107,6 @@ project.eslint?.addRules({
   ],
 })
 
-
 project.packageTask.reset()
 project.packageTask.exec('npx projen package-all')
 project.addPackageIgnore('.github')
@@ -115,68 +114,61 @@ project.addPackageIgnore('.npm/')
 project.addPackageIgnore('.cdk.out/')
 project.addPackageIgnore('.coverage/')
 
-
 const release: Job = {
   environment: {
-    name: 'publishEnv'
+    name: 'publishEnv',
   },
-  runsOn: ["ubuntu-latest"],
+  runsOn: ['ubuntu-latest'],
   steps: [
     {
       name: 'Checkout',
       uses: 'actions/checkout@v3',
-      with: { 'persist-credentials': false}
-
+      with: { 'persist-credentials': false },
     },
     {
       name: 'Setup Node.js',
       uses: 'actions/setup-node@v3',
       with: {
-       'node-version': 18,
-       'registry-url': "https://registry.npmjs.org",
-       scope: "@affinidi"
-      }
-
+        'node-version': 18,
+        'registry-url': 'https://registry.npmjs.org',
+        scope: '@affinidi',
+      },
     },
     {
       name: 'Install dependencies',
-      run: 'npm ci'
+      run: 'npm ci',
     },
     {
       name: 'build',
-      run: 'npm run build'
+      run: 'npm run build',
     },
     {
       name: 'release',
       run: 'npm run semantic-release',
       env: {
-        'NODE_AUTH_TOKEN': '${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}',
-        'GITHUB_TOKEN': '${{ secrets.PERSONAL_GITHUB_TOKEN }}'
-
-      }
-    }
-
-
+        NODE_AUTH_TOKEN: '${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}',
+        GITHUB_TOKEN: '${{ secrets.PERSONAL_GITHUB_TOKEN }}',
+      },
+    },
   ],
   permissions: {
     contents: JobPermission.READ,
     checks: JobPermission.READ,
     statuses: JobPermission.READ,
     securityEvents: JobPermission.WRITE,
-    packages: JobPermission.WRITE
+    packages: JobPermission.WRITE,
   },
-
 }
 
 const release_workflow = project.github!.addWorkflow('release')
 
 release_workflow.on({
   push: {
-    branches: ['main']
-  }
+    branches: ['main'],
+  },
 })
 
-release_workflow.addJobs({release})
+release_workflow.addJobs({ release })
 
 new JsonFile(project, '.releaserc.json', {
   obj: {
@@ -205,7 +197,6 @@ new JsonFile(project, '.releaserc.json', {
   },
 })
 
-
 const security: JobCallingReusableWorkflow = {
   uses: 'affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit',
   with: { 'config-path': '.github/labeler.yml' },
@@ -220,7 +211,6 @@ const security: JobCallingReusableWorkflow = {
 
 const security_workflow = project.github!.addWorkflow('security')
 
-
 security_workflow.on({
   pullRequest: {},
   workflowDispatch: {},
@@ -228,9 +218,6 @@ security_workflow.on({
 
 security_workflow.addJobs({ security })
 
-
 project.github?.addDependabot()
-
-
 
 project.synth()
