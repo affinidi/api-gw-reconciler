@@ -116,7 +116,7 @@ project.addPackageIgnore('.cdk.out/')
 project.addPackageIgnore('.coverage/')
 
 const pr: Job = {
-  name: 'lint',
+  name: 'test',
   runsOn: ['ubuntu-latest'],
   steps: [
     { uses: 'actions/checkout@v3' },
@@ -137,6 +137,7 @@ const pr: Job = {
 const pr_workflow = project.github!.addWorkflow('pr')
 
 pr_workflow.on({
+  workflowDispatch: {},
   pullRequest: {}, //switch to pullRequestTarget after merge
   // pullRequestTarget: {},
 })
@@ -192,6 +193,7 @@ const release: Job = {
 const release_workflow = project.github!.addWorkflow('release')
 
 release_workflow.on({
+  workflowDispatch: {},
   push: {
     branches: ['main'],
   },
