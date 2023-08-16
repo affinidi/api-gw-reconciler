@@ -33,6 +33,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   constructsVersion: MIN_CONSTRUCTS_VERSION,
   jsiiVersion: JSII_VERSION,
   github: true,
+  buildWorkflow: false,
   release: false,
   autoMerge: false,
   package: true,
@@ -113,6 +114,54 @@ project.addPackageIgnore('.github')
 project.addPackageIgnore('.npm/')
 project.addPackageIgnore('.cdk.out/')
 project.addPackageIgnore('.coverage/')
+
+//name: checks
+
+// on: [pull_request]
+
+// jobs:
+//   lint:
+//     runs-on: ubuntu-latest
+//     steps:
+//       - name: Checkout
+//         uses: actions/checkout@v3
+
+//       - name: Setup Node.js
+//         uses: actions/setup-node@v3
+//         with:
+//           node-version: 16
+
+//       - name: Install dependencies
+//         run: npm ci
+
+//       - name: Npm run test
+//         run: npm run lint
+const pr: Job = {
+  name: 'lint',
+  runsOn: ['ubuntu-latest'],
+  steps: [
+    { uses: 'actions/checkout@v3' },
+    { uses: 'actions/setup-node@v3', with: { 'node-version': MIN_NODE_VERSION } },
+    { run: 'npm ci' },
+    { run: 'npm run lint' },
+    { run: 'npm run test' },
+    { run: 'npm run build' }
+  ],
+  permissions: {
+    contents: JobPermission.READ,
+    checks: JobPermission.READ,
+    statuses: JobPermission.READ,
+    securityEvents: JobPermission.WRITE,
+  }
+}
+
+const pr_workflow = project.github!.addWorkflow('pr')
+
+pr_workflow.on({
+  pullRequestTarget: {}
+})
+
+pr_workflow.addJobs({ pr })
 
 const release: Job = {
   environment: {

@@ -38,7 +38,6 @@ docs/examples/cdk.out
 /test-reports/
 junit.xml
 /coverage/
-!/.github/workflows/build.yml
 !/.github/workflows/upgrade.yml
 !/.github/pull_request_template.md
 !/.prettierignore
@@ -53,6 +52,7 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+!/.github/workflows/pr.yml
 !/.github/workflows/release.yml
 !/.releaserc.json
 !/.github/workflows/security.yml
