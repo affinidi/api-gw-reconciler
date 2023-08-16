@@ -137,7 +137,8 @@ const pr: Job = {
 const pr_workflow = project.github!.addWorkflow('pr')
 
 pr_workflow.on({
-  pullRequestTarget: {},
+  pullRequest: {}, //switch to pullRequestTarget after merge
+  // pullRequestTarget: {},
 })
 
 pr_workflow.addJobs({ pr })
