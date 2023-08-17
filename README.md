@@ -15,6 +15,7 @@ Reconciler is cdk library construct, which could be deployed as part of AWS CDK 
 - [Usage](#rocket-usage)
 - [Support](#hammer_and_wrench-support)
 - [Contributing](#memo-contributing)
+- [Contributors](#contributors-)
 
 ## :package: Installation
 
