@@ -1,0 +1,76 @@
+{
+  "projectName": "api-gw-reconciler",
+  "projectOwner": "affinidi",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": ["README.md"],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "eslint",
+  "contributors": [
+    {
+      "login": "maratsh",
+      "name": "maratsh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/533533?v=4",
+      "profile": "https://github.com/maratsh",
+      "contributions": [
+        "code",
+        "doc",
+        "example",
+        "ideas",
+        "infra",
+        "maintenance",
+        "platform",
+        "question",
+        "review",
+        "test",
+        "tutorial"
+      ]
+    },
+    {
+      "login": "robert-affinidi",
+      "name": "Robert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88320072?v=4",
+      "profile": "https://github.com/robert-affinidi",
+      "contributions": ["review", "code"]
+    },
+    {
+      "login": "Yengas",
+      "name": "Yiğitcan UÇUM",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3743507?v=4",
+      "profile": "https://yigitcan.dev/",
+      "contributions": ["ideas", "code"]
+    },
+    {
+      "login": "standemchuk",
+      "name": "Stanislav Demchuk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2404558?v=4",
+      "profile": "https://github.com/standemchuk",
+      "contributions": ["review"]
+    },
+    {
+      "login": "yaroslava-kurash",
+      "name": "yaroslava-kurash",
+      "avatar_url": "https://avatars.githubusercontent.com/u/112872739?v=4",
+      "profile": "https://github.com/yaroslava-kurash",
+      "contributions": ["code"]
+    },
+    {
+      "login": "dmfilipenko",
+      "name": "Dmytro Filipenko",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1822520?v=4",
+      "profile": "https://github.com/dmfilipenko",
+      "contributions": ["code"]
+    },
+    {
+      "login": "viatcheslavmogilevsky",
+      "name": "Vyatcheslav Mogilevsky",
+      "avatar_url": "https://avatars.githubusercontent.com/u/734490?v=4",
+      "profile": "https://github.com/viatcheslavmogilevsky",
+      "contributions": ["code", "review"]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "linkToUsage": true
+}
+
