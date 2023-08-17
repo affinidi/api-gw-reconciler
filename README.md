@@ -1,6 +1,6 @@
 # api-gw-reconciler
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 > AWS API gateway reconciler
@@ -112,6 +112,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/yaroslava-kurash"><img src="https://avatars.githubusercontent.com/u/112872739?v=4?s=100" width="100px;" alt="yaroslava-kurash"/><br /><sub><b>yaroslava-kurash</b></sub></a><br /><a href="https://github.com/affinidi/api-gw-reconciler/commits?author=yaroslava-kurash" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dmfilipenko"><img src="https://avatars.githubusercontent.com/u/1822520?v=4?s=100" width="100px;" alt="Dmytro Filipenko"/><br /><sub><b>Dmytro Filipenko</b></sub></a><br /><a href="https://github.com/affinidi/api-gw-reconciler/commits?author=dmfilipenko" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/viatcheslavmogilevsky"><img src="https://avatars.githubusercontent.com/u/734490?v=4?s=100" width="100px;" alt="Vyatcheslav Mogilevsky"/><br /><sub><b>Vyatcheslav Mogilevsky</b></sub></a><br /><a href="https://github.com/affinidi/api-gw-reconciler/commits?author=viatcheslavmogilevsky" title="Code">💻</a> <a href="https://github.com/affinidi/api-gw-reconciler/pulls?q=is%3Apr+reviewed-by%3Aviatcheslavmogilevsky" title="Reviewed Pull Requests">👀</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/raja-sekhar-r"><img src="https://avatars.githubusercontent.com/u/68847302?v=4?s=100" width="100px;" alt="Raja"/><br /><sub><b>Raja</b></sub></a><br /><a href="https://github.com/affinidi/api-gw-reconciler/commits?author=raja-sekhar-r" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
