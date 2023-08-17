@@ -22,7 +22,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   defaultReleaseBranch: 'main',
   author: 'Marat Shakirov',
   authorAddress: 'marat.s@affinidi.com',
-  repositoryUrl: 'git@gitlab.com:affinidi/foundational/genesis/libs/api-gw-reconciler.git',
+  repositoryUrl: 'https://github.com/affinidi/api-gw-reconciler.git',
   name: 'api-gw-reconciler',
   packageName: '@affinidi/api-gw-reconciler',
   minNodeVersion: MIN_NODE_VERSION,
