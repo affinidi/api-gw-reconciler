@@ -7,7 +7,7 @@ const MIN_NODE_VERSION = '18.16.0'
 // https://www.npmjs.com/package/projen
 export const PROJEN_VERSION = '0.71.148'
 // https://www.npmjs.com/package/aws-cdk-lib
-const MIN_AWS_CDK_LIB_VERSION = '2.88.0'
+const MIN_AWS_CDK_LIB_VERSION = '2.92.0'
 // https://www.npmjs.com/package/constructs
 const MIN_CONSTRUCTS_VERSION = '10.2.55'
 // https://github.com/aws/jsii-compiler
