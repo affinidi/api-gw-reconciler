@@ -94,6 +94,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'ts-node',
   ],
   scripts: {
+    'semantic-release': 'semantic-release',
     lint: 'npm run eslint',
   },
 })
