@@ -75,6 +75,20 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/68847302?v=4",
       "profile": "https://github.com/raja-sekhar-r",
       "contributions": ["code"]
+    },
+    {
+      "login": "anton-iskryzhytskyi",
+      "name": "Anton Iskryzhytskyi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36485067?v=4",
+      "profile": "https://github.com/anton-iskryzhytskyi",
+      "contributions": ["code", "ideas", "review"]
+    },
+    {
+      "login": "kwekmh-affinidi",
+      "name": "kwekmh-affinidi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/138572541?v=4",
+      "profile": "https://github.com/kwekmh-affinidi",
+      "contributions": ["review", "security"]
     }
   ],
   "contributorsPerLine": 7,
