@@ -1,0 +1,4 @@
+[allowlist]
+description = "Whitelist files"
+files = ['''src/secrets.ts''', '''^\.?gitleaks.toml$''','''(.*?)(md|png|jpg|gif|doc|docx|pdf|bin|xls|pyc|zip)$''']
+paths = ['''test*''']

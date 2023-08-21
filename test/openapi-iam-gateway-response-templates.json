@@ -1,0 +1,766 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Acme IAM",
+    "version": "1.0.0",
+    "description": "Acme IAM",
+    "contact": {
+      "name": ""
+    },
+    "x-reconciler": {
+      "pathPrefix": "iam"
+    }
+  },
+  "tags": [
+    {
+      "name": "well-known",
+      "description": "Well known endpoints"
+    },
+    {
+      "name": "sts",
+      "description": "Secure token exchange"
+    },
+    {
+      "name": "projects",
+      "description": "CRUD for projects"
+    },
+    {
+      "name": "policies",
+      "description": "CRUD for authorization policies"
+    }
+  ],
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "security": [],
+  "x-amazon-apigateway-request-validators": {
+    "basic": {
+      "validateRequestBody": true,
+      "validateRequestParameters": true
+    }
+  },
+  "x-amazon-apigateway-request-validator": "basic",
+  "x-amazon-apigateway-gateway-responses": {
+    "ACCESS_DENIED": {
+      "responseTemplates": {
+        "application/json": "{\"name\": \"ActionForbiddenError\", \"code\": \"AUTH-4\", \"debugId\": \"$context.extendedRequestId\", \"message\": \"Principal can not execute action on given resource\", \"details\": [{\"issue\":\"$context.error.message\"}] }"
+      }
+    },
+    "UNAUTHORIZED": {
+      "responseTemplates": {
+        "application/json": "{\"name\": \"UnauthorizedError\", \"code\": \"AUTH-5\", \"debugId\": \"$context.extendedRequestId\", \"message\": \"Authorization token is not present\", \"details\": [{\"issue\":\"$context.error.message\"}] }"
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "UserTokenAuth": {
+        "type": "apiKey",
+        "name": "authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "custom",
+        "x-amazon-apigateway-authorizer": {
+          "type": "request",
+          "identitySource": "method.request.header.authorization",
+          "identityValidationExpression": "Bearer .*",
+          "authorizerUri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:111111111111111:function:iam-dev-UserTokenAuthorizerLambdaF94760BC-bT4el5QQtBJJ/invocations",
+          "authorizerResultTtlInSeconds": 1
+        }
+      },
+      "ProjectTokenAuth": {
+        "type": "apiKey",
+        "name": "authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "custom",
+        "x-amazon-apigateway-authorizer": {
+          "type": "request",
+          "identitySource": "method.request.header.authorization",
+          "identityValidationExpression": "Bearer .*",
+          "authorizerUri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:111111111111111:function:iam-dev-ProjectTokenAuthorizerC83BEF45-elvJgVdbp078/invocations",
+          "authorizerResultTtlInSeconds": 1
+        }
+      }
+    },
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {
+      "UnexpectedErrorResponse": {
+        "description": "An unexpected error occurred",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ServiceErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ServiceErrorResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "debugId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "unique id for correlating this specific error to logs"
+          },
+          "name": {
+            "type": "string",
+            "description": "name of the error"
+          },
+          "code": {
+            "type": "string",
+            "description": "backwards compatible error code"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "issue": {
+                  "type": "string"
+                },
+                "field": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "issue"
+              ]
+            }
+          }
+        },
+        "required": [
+          "debugId",
+          "name",
+          "code"
+        ]
+      },
+      "UserDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "principalId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "principalId"
+        ]
+      },
+      "AddUserToProjectInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "principalId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "principalId"
+        ]
+      },
+      "CreateProjectScopedTokenInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "CreateProjectScopedTokenOutput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer"
+          },
+          "scope": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessToken",
+          "expiresIn",
+          "scope"
+        ]
+      },
+      "ProjectDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "CreateProjectInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ProjectList": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projects": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "projects"
+        ]
+      },
+      "UserList": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/UserDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "records"
+        ]
+      },
+      "PolicyStatementDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "effect": {
+            "type": "string"
+          },
+          "principal": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "resource": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "action",
+          "effect",
+          "principal",
+          "resource"
+        ]
+      },
+      "PolicyDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "principalId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyStatementDto"
+            }
+          }
+        },
+        "required": [
+          "version",
+          "statement"
+        ]
+      },
+      "JsonWebKeyDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kid": {
+            "type": "string"
+          },
+          "kty": {
+            "type": "string"
+          },
+          "n": {
+            "type": "string"
+          },
+          "e": {
+            "type": "string"
+          },
+          "alg": {
+            "type": "string"
+          },
+          "use": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kid",
+          "kty",
+          "alg",
+          "use"
+        ]
+      },
+      "JsonWebKeySetDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "keys": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/JsonWebKeyDto"
+            }
+          }
+        },
+        "required": [
+          "keys"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/.well-known/jwks.json": {
+      "get": {
+        "operationId": "getWellKnownJwks",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonWebKeySetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/UnexpectedErrorResponse"
+          }
+        },
+        "security": [],
+        "tags": [
+          "well-known"
+        ]
+      }
+    },
+    "/v1/create-project-scoped-token": {
+      "post": {
+        "operationId": "createProjectScopedToken",
+        "parameters": [],
+        "security": [
+          {
+            "UserTokenAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectScopedTokenInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created Project Scoped Tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProjectScopedTokenOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "sts"
+        ]
+      }
+    },
+    "/v1/projects": {
+      "post": {
+        "operationId": "createProject",
+        "security": [
+          {
+            "UserTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listProject",
+        "security": [
+          {
+            "UserTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectList"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/UnexpectedErrorResponse"
+          }
+        },
+        "tags": [
+          "projects"
+        ],
+        "parameters": []
+      }
+    },
+    "/v1/projects/users": {
+      "post": {
+        "operationId": "addUserToProject",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserToProjectInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "NoContent"
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      },
+      "get": {
+        "operationId": "listUsersOfProject",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/users/{userId}": {
+      "delete": {
+        "operationId": "deleteUserFromProject",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "description": "id of user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/policies/users/{userId}": {
+      "get": {
+        "operationId": "getPolicies",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "policies"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "updatePolicies",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "policies"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyDto"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

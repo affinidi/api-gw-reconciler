@@ -1,0 +1,847 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Acme IAM",
+    "version": "1.0.0",
+    "description": "Acme IAM",
+    "contact": {
+      "name": ""
+    },
+    "x-reconciler": {
+      "pathPrefix": "iam"
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "security": [],
+  "x-amazon-apigateway-request-validators": {
+    "basic": {
+      "validateRequestBody": true,
+      "validateRequestParameters": true
+    }
+  },
+  "x-amazon-apigateway-request-validator": "basic",
+  "components": {
+    "securitySchemes": {
+      "WrongUserTokenAuth": {
+        "type": "apiKey",
+        "name": "authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "custom",
+        "x-amazon-apigateway-authorizer": {
+          "type": "request",
+          "identitySource": "method.request.header.authorization",
+          "identityValidationExpression": "Bearer .*",
+          "authorizerUri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-UserTokenAuthorizerLambdaF94760BC-bT4el5QQtBJJ/invocations",
+          "authorizerResultTtlInSeconds": 1
+        }
+      },
+      "WrongProjectTokenAuth": {
+        "type": "apiKey",
+        "name": "authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "custom",
+        "x-amazon-apigateway-authorizer": {
+          "type": "request",
+          "identitySource": "method.request.header.authorization",
+          "identityValidationExpression": "Bearer .*",
+          "authorizerUri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-ProjectTokenAuthorizerC83BEF45-elvJgVdbp078/invocations",
+          "authorizerResultTtlInSeconds": 1
+        }
+      }
+    },
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "ServiceErrorResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "debugId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "unique id for correlating this specific error to logs"
+          },
+          "name": {
+            "type": "string",
+            "description": "name of the error"
+          },
+          "code": {
+            "type": "string",
+            "description": "backwards compatible Acme error code"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "issue": {
+                  "type": "string"
+                },
+                "field": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string",
+                  "enum": [
+                    "body",
+                    "path",
+                    "query"
+                  ]
+                }
+              },
+              "required": [
+                "issue"
+              ]
+            }
+          }
+        },
+        "required": [
+          "debugId",
+          "name",
+          "code"
+        ]
+      },
+      "UserDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "principalId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "principalId"
+        ]
+      },
+      "AddUserToProjectInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "principalId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "principalId"
+        ]
+      },
+      "CreateProjectScopedTokenInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "CreateProjectScopedTokenOutput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "format": "jwt"
+          },
+          "expiresIn": {
+            "type": "integer"
+          },
+          "scope": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessToken",
+          "expiresIn",
+          "scope"
+        ]
+      },
+      "ProjectDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "CreateProjectInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ProjectList": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projects": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "projects"
+        ]
+      },
+      "UserList": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/UserDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "records"
+        ]
+      },
+      "PolicyStatementDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Action": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "Effect": {
+            "type": "string"
+          },
+          "Principal": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "Resource": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "Action",
+          "Effect",
+          "Principal",
+          "Resource"
+        ]
+      },
+      "PolicyDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "principalId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "Version": {
+            "type": "string"
+          },
+          "Statement": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyStatementDto"
+            }
+          }
+        },
+        "required": [
+          "Version",
+          "Statement"
+        ]
+      },
+      "JsonWebKeyDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kid": {
+            "type": "string"
+          },
+          "kty": {
+            "type": "string",
+            "enum": [
+              "RSA"
+            ]
+          },
+          "n": {
+            "type": "string"
+          },
+          "e": {
+            "type": "string"
+          },
+          "alg": {
+            "type": "string",
+            "enum": [
+              "PS256"
+            ]
+          },
+          "use": {
+            "type": "string",
+            "enum": [
+              "sig"
+            ]
+          }
+        },
+        "required": [
+          "kid",
+          "kty",
+          "n",
+          "e",
+          "alg",
+          "use"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/public-keys": {
+      "get": {
+        "operationId": "getPublicKeys",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonWebKeyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "iam"
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-GenericResourcesgetPublicKeysLambda501910D-xGE7nBtzwIQH:live-alias/invocations"
+        }
+      }
+    },
+    "/create-project-scoped-token": {
+      "post": {
+        "operationId": "createProjectScopedToken",
+        "parameters": [],
+        "security": [
+          {
+            "UserTokenAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectScopedTokenInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created Project Scoped Tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProjectScopedTokenOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "sts"
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-GenericResourcescreateProjectScopedTokenLa-NlZkEEArbvn0:live-alias/invocations"
+        }
+      }
+    },
+    "/projects": {
+      "post": {
+        "operationId": "createProject",
+        "security": [
+          {
+            "UserTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectInput"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-GenericResourcescreateProjectLambdaA7C72D6-D7gdNf0x7CKT:live-alias/invocations"
+        }
+      },
+      "get": {
+        "operationId": "listProject",
+        "security": [
+          {
+            "UserTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectList"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ],
+        "parameters": [],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-GenericResourceslistProjectLambda2A9BE323-buJywVlKHuj0:live-alias/invocations"
+        }
+      }
+    },
+    "/projects/users": {
+      "post": {
+        "operationId": "addUserToProject",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUserToProjectInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "NoContent"
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-GenericResourcesaddUserToProjectLambdaFB46-P9MdnROe1PzN:live-alias/invocations"
+        }
+      },
+      "get": {
+        "operationId": "listUsersOfProject",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-GenericResourceslistUsersOfProjectLambda85-jEhJ1Lrnp5pr:live-alias/invocations"
+        }
+      }
+    },
+    "/projects/users/{userId}": {
+      "delete": {
+        "operationId": "deleteUserFromProject",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "description": "id of user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "projects"
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:111111111111111:function:iam-dev-GenericResourcesdeleteUserFromProjectLambd-gk1m2GZXqdeR:live-alias/invocations"
+        }
+      }
+    },
+    "/policies/users/{userId}": {
+      "get": {
+        "operationId": "getPolicies",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "policies"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:111111111111111:function:iam-dev-GenericResourcesgetPoliciesLambda0CEBA1CE-Mba4sBYbHU3S:live-alias/invocations"
+        }
+      },
+      "put": {
+        "operationId": "updatePolicies",
+        "security": [
+          {
+            "ProjectTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "policies"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyDto"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "POST",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:222222222222:function:iam-dev-GenericResourcesupdatePoliciesLambda12DC96-RZeAAJBecZr6:live-alias/invocations"
+        }
+      }
+    }
+  }
+}

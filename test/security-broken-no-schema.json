@@ -1,0 +1,21 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "central-api-managed-api-gw",
+    "version": "1.0.0",
+    "description": "Acme Central API GW",
+    "x-reconciler": {
+      "pathPrefix": "reconciler"
+    }
+  },
+  "paths": {},
+  "components": {},
+
+  "x-amazon-apigateway-request-validators": {
+    "basic": {
+      "validateRequestBody": true,
+      "validateRequestParameters": true
+    }
+  },
+  "x-amazon-apigateway-request-validator": "basic"
+}
