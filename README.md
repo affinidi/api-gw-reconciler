@@ -1,6 +1,6 @@
 # api-gw-reconciler
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 > AWS API gateway reconciler
@@ -115,6 +115,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/raja-sekhar-r"><img src="https://avatars.githubusercontent.com/u/68847302?v=4?s=100" width="100px;" alt="Raja"/><br /><sub><b>Raja</b></sub></a><br /><a href="https://github.com/affinidi/api-gw-reconciler/commits?author=raja-sekhar-r" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/anton-iskryzhytskyi"><img src="https://avatars.githubusercontent.com/u/36485067?v=4?s=100" width="100px;" alt="Anton Iskryzhytskyi"/><br /><sub><b>Anton Iskryzhytskyi</b></sub></a><br /><a href="https://github.com/affinidi/api-gw-reconciler/commits?author=anton-iskryzhytskyi" title="Code">💻</a> <a href="#ideas-anton-iskryzhytskyi" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/affinidi/api-gw-reconciler/pulls?q=is%3Apr+reviewed-by%3Aanton-iskryzhytskyi" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kwekmh-affinidi"><img src="https://avatars.githubusercontent.com/u/138572541?v=4?s=100" width="100px;" alt="kwekmh-affinidi"/><br /><sub><b>kwekmh-affinidi</b></sub></a><br /><a href="https://github.com/affinidi/api-gw-reconciler/pulls?q=is%3Apr+reviewed-by%3Akwekmh-affinidi" title="Reviewed Pull Requests">👀</a> <a href="#security-kwekmh-affinidi" title="Security">🛡️</a></td>
     </tr>
   </tbody>
   <tfoot>
