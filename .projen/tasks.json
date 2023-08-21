@@ -183,6 +183,14 @@
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
     },
+    "semantic-release": {
+      "name": "semantic-release",
+      "steps": [
+        {
+          "exec": "semantic-release"
+        }
+      ]
+    },
     "test": {
       "name": "test",
       "description": "Run tests",
