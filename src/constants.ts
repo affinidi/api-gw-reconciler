@@ -19,7 +19,8 @@ export const DEFAULT_OPENAPI_INFO_METADATA_KEY = 'x-reconciler'
 
 export const LOG_JSON_IDENT = 4
 export const MINIMUM_PREFIX_LENGHT = 3
-export const LAMBDA_TIMEOUT_IN_SECONDS = 15000
+export const RECONCILER_LAMBDA_TIMEOUT_IN_SECONDS = 30
+export const OPENAPI_DOCS_LAMBDA_TIMEOUT_IN_SECONDS = 15
 
 export const DEFAULT_HEADER_SCHEMA_PATH = 'openapi/header.json'
 
