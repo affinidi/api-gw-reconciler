@@ -73,7 +73,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '@aws-lambda-powertools/logger',
     '@aws-sdk/client-s3',
     '@aws-sdk/client-api-gateway',
-    '@aws-sdk/lib-storage',
     'atlassian-openapi',
     `openapi-merge@${OPENAPI_MERGE_VERSION}`,
   ],

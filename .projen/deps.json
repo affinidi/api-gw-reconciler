@@ -170,10 +170,6 @@
       "type": "bundled"
     },
     {
-      "name": "@aws-sdk/lib-storage",
-      "type": "bundled"
-    },
-    {
       "name": "atlassian-openapi",
       "type": "bundled"
     },
