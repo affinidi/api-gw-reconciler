@@ -1,7 +1,7 @@
 import { CfnOutput, Duration, Stack } from 'aws-cdk-lib'
 import { IRestApi, RestApi } from 'aws-cdk-lib/aws-apigateway'
 import { AccountPrincipal, Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
-import { Runtime } from 'aws-cdk-lib/aws-lambda'
+import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { Bucket, EventType } from 'aws-cdk-lib/aws-s3'
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment'
@@ -141,6 +141,7 @@ export class APIGWReconciler extends Construct {
     this.reconcilerLambda = new NodejsFunction(this, 'APIGWReconcilerLambda', {
       description: 'Reconciler Lambda that gets triggered to update the API GW',
       runtime: Runtime.NODEJS_18_X,
+      architecture: Architecture.ARM_64,
       memorySize: 256,
       reservedConcurrentExecutions: 1,
       timeout: Duration.seconds(RECONCILER_LAMBDA_TIMEOUT_IN_SECONDS),

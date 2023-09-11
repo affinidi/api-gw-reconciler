@@ -67,22 +67,19 @@ const project = new awscdk.AwsCdkConstructLibrary({
     dirs: [],
     ignorePatterns: ['!.projenrc.js', '*.spec.ts', '*.test.ts'],
   },
-  gitignore: ['cdk.out', 'test/integ.reconciler.ts.snapshot', 'docs/examples/cdk.out'],
+  gitignore: ['cdk.out', 'test/integ.reconciler.ts.snapshot', 'examples/cdk.out', ],
+  //non jsii deps must be bundled
   bundledDeps: [
     '@aws-lambda-powertools/logger',
     '@aws-sdk/client-s3',
     '@aws-sdk/client-api-gateway',
-    '@aws-sdk/lib-storage',
     'atlassian-openapi',
-    'aws-lambda',
     `openapi-merge@${OPENAPI_MERGE_VERSION}`,
   ],
-
-  deps: [],
   devDeps: [
     '@aws-lambda-powertools/commons',
-    '@types/aws-lambda',
     'esbuild',
+    '@types/aws-lambda',
     '@semantic-release/git',
     '@semantic-release/gitlab',
     '@semantic-release/npm',
