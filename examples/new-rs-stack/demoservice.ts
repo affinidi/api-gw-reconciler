@@ -1,92 +1,20 @@
-import { App, Aws, CfnOutput, Stack, StackProps } from 'aws-cdk-lib'
-import * as apigateway from 'aws-cdk-lib/aws-apigateway'
+import { App, Stack, StackProps } from 'aws-cdk-lib'
 import { Construct } from 'constructs'
-import { APIGWReconciler } from '../src/api-gw-reconciler'
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment'
 import { Function, InlineCode, Runtime } from 'aws-cdk-lib/aws-lambda'
 import { ServicePrincipal } from 'aws-cdk-lib/aws-iam'
+import { Bucket } from 'aws-cdk-lib/aws-s3'
+import * as conf from './config'
+// import authApiSchema from './authservice-api-schema.json'
 
 
 
 class ReconcilerStack extends Stack {
-  public readonly reconciler: APIGWReconciler
-  public readonly api: apigateway.RestApi
 
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props)
 
-    //Create API gateway normally or via RefactorSpaces
-    this.api = new apigateway.RestApi(this, 'api', {})
-    this.api.root.addMethod('ANY')
-    const restApiReference = apigateway.RestApi.fromRestApiId(this, 'restApiReference', this.api.restApiId)
-
-
-    //Reconciler stack
-    this.reconciler = new APIGWReconciler(this, 'reconciler', {
-      restAPI: restApiReference,
-      securitySchemaPath: 'authservice/openapi.json',
-      apiDocPathPrefix: 'dev/api-docs',
-      apiDocSimpleAuthToken: '',
-      openapiHeader: {
-        info: {
-          title: 'test',
-          version: '1.0.2',
-          description: 'Central API GW test',
-        },
-        openapi: '',
-        paths: {},
-      },
-
-      allowedAccounts: [
-        {
-          allowedApiPathPrefix: 'authservice',
-          id: Aws.ACCOUNT_ID, //This should be account where *authservice* is deployed
-        },
-        {
-          allowedApiPathPrefix: 'demoservice',
-          id: Aws.ACCOUNT_ID, //This should be account where *authservice* is deployed
-        },
-      ],
-    })
-
-
-    // "Resource": "arn:aws:execute-api:us-west-2:123456789012:ymy8tbxw7b/dev/GET/"
-
-    //This should be on service side
-
-    const authserviceoperation = new Function(this, 'authserviceoperation', {
-      runtime: Runtime.NODEJS_18_X,
-      code: new InlineCode(
-        `
-        exports.handler = async function() {
-          return {
-            "principalId": "user",
-            "policyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Action": "execute-api:Invoke",
-                  "Effect": "Allow"
-                  "Resource": arn:aws:execute-api:*:*:*/*/POST/demoservice/v1/demo "
-                }
-              ]
-            }
-          };
-        };
-        `),
-      handler: 'index.handler'
-    })
-
-    //Allow API gateway to call auth function as an authorizer
-    authserviceoperation.addPermission(`PermitAPIGWInvocationFor_auth}`, {
-      principal: new ServicePrincipal('apigateway.amazonaws.com'),
-      sourceArn: this.api.arnForExecuteApi('authorizers', '/*', '/').replace(
-        '///authorizers',
-        '/authorizers',
-      ),
-    })
-
-    const authserviceOperationUri = `arn:${Stack.of(this).partition}:apigateway:${Stack.of(this).region}:lambda:path/2015-03-31/functions/${authserviceoperation.functionArn}/invocations`
+    const reconcilerBucket = Bucket.fromBucketArn(this, 'SourceBucket', conf.reconcilerAPISchemaBucketArn);
 
 
     const demooperation = new Function(this, 'demooperation', {
@@ -102,52 +30,15 @@ class ReconcilerStack extends Stack {
       handler: 'index.handler'
     })
 
-    //Allow  API gateway to call auth function for method execution
     demooperation.addPermission(`PermitAPIGWInvocationFor_demo`, {
       principal: new ServicePrincipal('apigateway.amazonaws.com'),
-      sourceArn: this.api.arnForExecuteApi('*'),
+      sourceArn: conf.centralAPIGW + "*",
     })
 
     const demoserviceOperationUri = `arn:${Stack.of(this).partition}:apigateway:${Stack.of(this).region}:lambda:path/2015-03-31/functions/${demooperation.functionArn}/invocations`
-
-    const testauthserviceDefinition = {
-      "openapi": "3.0.3",
-      "info": {
-        "title": "central-api-managed-api-gw",
-        "version": "1.0.0",
-        "description": "Acme Central API GW",
-        "x-reconciler": {
-          "pathPrefix": "authservice"
-        }
-      },
-      "paths": {},
-      "components": {
-
-        "securitySchemes": {
-          "UserTokenAuth": {
-            "type": "apiKey",
-            "name": "authorization",
-            "in": "header",
-            "x-amazon-apigateway-authtype": "custom",
-            "x-amazon-apigateway-authorizer": {
-              "type": "request",
-              "identitySource": "method.request.header.authorization",
-              "identityValidationExpression": "Bearer .*",
-              "authorizerUri": authserviceOperationUri,
-              "authorizerResultTtlInSeconds": 0
-            }
-          }
-        }
-      },
-      "x-amazon-apigateway-request-validators": {
-        "basic": {
-          "validateRequestBody": true,
-          "validateRequestParameters": true
-        }
-      },
-      "x-amazon-apigateway-request-validator": "basic"
-    }
-
+    //const testdemoserviceDefinition = authApiSchema;
+    // authApiSchema.paths['\/v1\/demo\/sigv4'].post['x-amazon-apigateway-integration'].uri = demoserviceOperationUri;
+    // authApiSchema.paths['\/v1\/demo\/usertoken'].post['x-amazon-apigateway-integration'].uri = demoserviceOperationUri;
 
     const testdemoserviceDefinition = {
       "openapi": "3.0.3",
@@ -395,51 +286,14 @@ class ReconcilerStack extends Stack {
       }
     }
 
-    //Service can deploy their openapi schemas via BucketDeployment
-    new BucketDeployment(this, 'testSchemaserviceAuth', {
-      destinationBucket: this.reconciler.openApiDefinitionBucket,
-      destinationKeyPrefix: 'authservice',
-      prune: false,
-      sources: [Source.jsonData('openapi.json', testauthserviceDefinition)],
-    })
 
     //Service can deploy their openapi schemas via BucketDeployment
     new BucketDeployment(this, 'testSchemaDemo', {
-      destinationBucket: this.reconciler.openApiDefinitionBucket,
+      destinationBucket: reconcilerBucket,
       destinationKeyPrefix: 'demoservice',
       prune: false,
       sources: [Source.jsonData('openapi.json', testdemoserviceDefinition)],
     })
-
-    new CfnOutput(this, 'curlJWT', {
-      value: `
-
-        Use this command to test: 
-
-        curl  https://${this.api.restApiId}.execute-api.ap-southeast-1.amazonaws.com/dev/demoservice/v1/demo/sigv4 \
-          -H "authorization: Bearer xxx"  \
-          -H 'Content-Type: application/json' \
-          -d'{"message": "Hello"}'
-        `
-    })
-
-    new CfnOutput(this, 'curl', {
-      value: `
-
-        Use this command to test:
-
-
-        curl --aws-sigv4 "aws:amz:ap-southeast-1:execute-api"  \
-        https://${this.api.restApiId}.execute-api.ap-southeast-1.amazonaws.com/dev/demoservice/v1/demo/usertoken   \
-        -H "x-amz-security-token: $AWS_SESSION_TOKEN" --user "$AWS_ACCESS_KEY_ID":"$AWS_SECRET_ACCESS_KEY"  \
-        -d '{"message": "Hello" }'
-        `
-    })
-
-    new CfnOutput(this, 'api-doc url', {
-      value: `https://${this.api.restApiId}.execute-api.ap-southeast-1.amazonaws.com/dev/api-docs/ui?token=`
-    })
-
   }
 
 
