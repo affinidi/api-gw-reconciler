@@ -29,7 +29,7 @@ export const S3_BUCKET_PROPS = {
   autoDeleteObjects: true,
   accessControl: BucketAccessControl.PRIVATE,
   blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-  objectOwnership: ObjectOwnership.BUCKET_OWNER_PREFERRED,
+  objectOwnership: ObjectOwnership.BUCKET_OWNER_ENFORCED,
   enforceSSL: true,
 }
 
