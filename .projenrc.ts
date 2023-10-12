@@ -175,7 +175,7 @@ const release: Job = {
       run: 'npm run semantic-release',
       env: {
         NODE_AUTH_TOKEN: '${{ secrets.PUBLIC_NPM_NODE_AUTH_TOKEN }}',
-        GITHUB_TOKEN: '${{ secrets.PERSONAL_GITHUB_TOKEN }}',
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}',
       },
     },
   ],
