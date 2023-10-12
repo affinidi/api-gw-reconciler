@@ -180,11 +180,12 @@ const release: Job = {
     },
   ],
   permissions: {
-    contents: JobPermission.READ,
+    contents: JobPermission.WRITE,
     checks: JobPermission.READ,
     statuses: JobPermission.READ,
     securityEvents: JobPermission.WRITE,
     packages: JobPermission.WRITE,
+  
   },
 }
 
