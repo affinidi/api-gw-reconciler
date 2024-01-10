@@ -1,7 +1,7 @@
 import { CfnOutput, Duration, Stack } from 'aws-cdk-lib'
 import { IRestApi, RestApi } from 'aws-cdk-lib/aws-apigateway'
 import { AccountPrincipal, Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
-import { Runtime } from 'aws-cdk-lib/aws-lambda'
+import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { Bucket, EventType } from 'aws-cdk-lib/aws-s3'
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment'
@@ -18,7 +18,8 @@ import {
   DEFAULT_MERGED_OPENAPI_PATH,
   DEFAULT_SECURITY_SCHEMA_PATH,
   DEFAULT_OPENAPI_INFO_METADATA_KEY,
-  LAMBDA_TIMEOUT_IN_SECONDS,
+  RECONCILER_LAMBDA_TIMEOUT_IN_SECONDS,
+  OPENAPI_DOCS_LAMBDA_TIMEOUT_IN_SECONDS,
   S3_BUCKET_PROPS,
   DEFAULT_HEADER_SCHEMA,
   DEFAULT_API_DOC_PATH_PREFIX,
@@ -107,6 +108,7 @@ export class APIGWReconciler extends Construct {
       description: 'Lambda that returns swagger file on request',
       runtime: Runtime.NODEJS_18_X,
       memorySize: 256,
+      timeout: Duration.seconds(OPENAPI_DOCS_LAMBDA_TIMEOUT_IN_SECONDS),
       environment: {
         MERGED_OPENAPI_BUCKET: this.mergedOpenapiBucket.bucketName,
         MERGED_OPENAPI_PATH: DEFAULT_MERGED_OPENAPI_PATH,
@@ -121,7 +123,7 @@ export class APIGWReconciler extends Construct {
       description: 'Lambda that returns ReDoc HTML page on request',
       runtime: Runtime.NODEJS_18_X,
       memorySize: 256,
-      timeout: Duration.millis(LAMBDA_TIMEOUT_IN_SECONDS),
+      timeout: Duration.seconds(OPENAPI_DOCS_LAMBDA_TIMEOUT_IN_SECONDS),
       environment: {
         REST_API_ID: restApiId,
         REGION: scope.region,
@@ -139,9 +141,10 @@ export class APIGWReconciler extends Construct {
     this.reconcilerLambda = new NodejsFunction(this, 'APIGWReconcilerLambda', {
       description: 'Reconciler Lambda that gets triggered to update the API GW',
       runtime: Runtime.NODEJS_18_X,
+      architecture: Architecture.ARM_64,
       memorySize: 256,
       reservedConcurrentExecutions: 1,
-      timeout: Duration.millis(LAMBDA_TIMEOUT_IN_SECONDS),
+      timeout: Duration.seconds(RECONCILER_LAMBDA_TIMEOUT_IN_SECONDS),
       environment: {
         OPEN_API_LAMBDA_NAME: this.openapiDocsLambda.functionArn,
         REDOC_LAMBDA_NAME: this.redocLambda.functionArn,

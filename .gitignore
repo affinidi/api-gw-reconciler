@@ -33,7 +33,7 @@ jspm_packages/
 .cache
 cdk.out
 test/integ.reconciler.ts.snapshot
-docs/examples/cdk.out
+examples/cdk.out
 !/.projenrc.js
 /test-reports/
 junit.xml
