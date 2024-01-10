@@ -89,6 +89,13 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/138572541?v=4",
       "profile": "https://github.com/kwekmh-affinidi",
       "contributions": ["review", "security"]
+    },
+    {
+      "login": "sanjay95",
+      "name": "Sanjay",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1314582?v=4",
+      "profile": "https://www.linkedin.com/in/sanjay95/",
+      "contributions": ["code"]
     }
   ],
   "contributorsPerLine": 7,
