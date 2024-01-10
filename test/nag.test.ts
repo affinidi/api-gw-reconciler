@@ -10,18 +10,18 @@ import { Annotations, Match, Template } from 'aws-cdk-lib/assertions'
 function supressCDKNAG (reconciler: APIGWReconciler) {
 
   NagSuppressions.addResourceSuppressions(reconciler.mergedOpenapiBucket, [
-    { id: 'AwsSolutions-S1', reason: 'S3 logs are not required' },
-    { id: 'AwsSolutions-IAM5', reason: 'Allowing use of service role for lambda' },
+    { id: 'AwsSolutions-S1', reason: 'S3 logs are not required for openapi bucket' },
+    { id: 'AwsSolutions-IAM5', reason: 'Standard permissions from AWS require wildcard' },
 
   ], true);
   NagSuppressions.addResourceSuppressions(reconciler.openApiDefinitionBucket, [
-    { id: 'AwsSolutions-S1', reason: 'S3 logs are not required' },
+    { id: 'AwsSolutions-S1', reason: 'S3 logs are not required for openApiDefinitionBucket' },
 
   ], true);
 
   //TODO: narrow down to specifc resources
   NagSuppressions.addResourceSuppressions(reconciler, [
-    { id: 'AwsSolutions-IAM5', reason: 'Allowing use of wildcard in permissions' },
+    { id: 'AwsSolutions-IAM5', reason: 'Standard permissions from AWS require wildcard' },
 
   ], true);
 
@@ -29,7 +29,7 @@ function supressCDKNAG (reconciler: APIGWReconciler) {
     NagSuppressions.addStackSuppressions(
       Stack.of(reconciler),
       [
-        { id: 'AwsSolutions-L1', reason: 'Allow bucketdeployment'},
+        { id: 'AwsSolutions-L1', reason: 'Custom resource bucket deployment lambdas runs on python3.9'},
 
         {
           id: 'AwsSolutions-IAM4',
@@ -95,6 +95,7 @@ describe('TestCDKNAG', () => {
       }
     )
     const template = Template.fromStack(stack)
+    console.log(JSON.stringify(template.toJSON(), null, 4)  )
     app.synth()
 
 
