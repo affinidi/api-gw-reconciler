@@ -67,7 +67,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     dirs: [],
     ignorePatterns: ['!.projenrc.js', '*.spec.ts', '*.test.ts'],
   },
-  gitignore: ['cdk.out', 'test/integ.reconciler.ts.snapshot', 'examples/cdk.out', ],
+  gitignore: ['cdk.out', 'test/integ.reconciler.ts.snapshot', 'examples/cdk.out'],
   //non jsii deps must be bundled
   bundledDeps: [
     '@aws-lambda-powertools/logger',
@@ -185,7 +185,6 @@ const release: Job = {
     statuses: JobPermission.READ,
     securityEvents: JobPermission.WRITE,
     packages: JobPermission.WRITE,
-  
   },
 }
 
