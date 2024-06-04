@@ -3,15 +3,15 @@ import { Job, JobCallingReusableWorkflow, JobPermission } from 'projen/lib/githu
 import { NpmAccess } from 'projen/lib/javascript'
 import { TrailingComma } from 'projen/lib/javascript/prettier'
 
-const MIN_NODE_VERSION = '18.16.0'
+const MIN_NODE_VERSION = '20.0.0'
 // https://www.npmjs.com/package/projen
-export const PROJEN_VERSION = '0.71.148'
+export const PROJEN_VERSION = '0.82.4'
 // https://www.npmjs.com/package/aws-cdk-lib
-const MIN_AWS_CDK_LIB_VERSION = '2.92.0'
+const MIN_AWS_CDK_LIB_VERSION = '2.144.0'
 // https://www.npmjs.com/package/constructs
-const MIN_CONSTRUCTS_VERSION = '10.2.55'
+const MIN_CONSTRUCTS_VERSION = '10.3.0'
 // https://github.com/aws/jsii-compiler
-const JSII_VERSION = '~5.0.0'
+const JSII_VERSION = '~5.4.0'
 // https://www.npmjs.com/package/openapi-merge
 // keep this pinned to not have accidental side-effects
 const OPENAPI_MERGE_VERSION = '1.3.2'
@@ -81,7 +81,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'esbuild',
     '@types/aws-lambda',
     '@semantic-release/git',
-    '@semantic-release/gitlab',
     '@semantic-release/npm',
     '@semantic-release/exec',
     'semantic-release',
@@ -89,6 +88,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     `@aws-cdk/integ-runner@^${MIN_AWS_CDK_LIB_VERSION}-alpha.0`,
     `@aws-cdk/integ-tests-alpha@^${MIN_AWS_CDK_LIB_VERSION}-alpha.0`,
     'ts-node',
+    'source-map-support',
   ],
   scripts: {
     'semantic-release': 'semantic-release',
@@ -117,8 +117,8 @@ const pr: Job = {
   name: 'test',
   runsOn: ['ubuntu-latest'],
   steps: [
-    { uses: 'actions/checkout@v3' },
-    { uses: 'actions/setup-node@v3', with: { 'node-version': MIN_NODE_VERSION } },
+    { uses: 'actions/checkout@v4' },
+    { uses: 'actions/setup-node@v4', with: { 'node-version': MIN_NODE_VERSION } },
     { run: 'npm ci' },
     { run: 'npm run lint' },
     { run: 'npm run test' },
@@ -150,14 +150,14 @@ const release: Job = {
   steps: [
     {
       name: 'Checkout',
-      uses: 'actions/checkout@v3',
+      uses: 'actions/checkout@v4',
       with: { 'persist-credentials': false },
     },
     {
       name: 'Setup Node.js',
-      uses: 'actions/setup-node@v3',
+      uses: 'actions/setup-node@v4',
       with: {
-        'node-version': 18,
+        'node-version': 20,
         'registry-url': 'https://registry.npmjs.org',
         scope: '@affinidi',
       },
