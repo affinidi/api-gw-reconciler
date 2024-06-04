@@ -1,4 +1,4 @@
-import type { LambdaInterface } from '@aws-lambda-powertools/commons'
+import type { LambdaInterface } from '@aws-lambda-powertools/commons/types';
 import { Logger } from '@aws-lambda-powertools/logger'
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
