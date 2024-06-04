@@ -1,4 +1,4 @@
-import type { LambdaInterface } from '@aws-lambda-powertools/commons'
+import type { LambdaInterface } from '@aws-lambda-powertools/commons/types';
 import { Logger } from '@aws-lambda-powertools/logger'
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_STATUS_INTERNAL_SERVER_ERROR, HTTP_STATUS_FORBIDDEN } from './constants'

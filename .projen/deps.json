@@ -2,12 +2,12 @@
   "dependencies": [
     {
       "name": "@aws-cdk/integ-runner",
-      "version": "^2.92.0-alpha.0",
+      "version": "^2.144.0-alpha.0",
       "type": "build"
     },
     {
       "name": "@aws-cdk/integ-tests-alpha",
-      "version": "^2.92.0-alpha.0",
+      "version": "^2.144.0-alpha.0",
       "type": "build"
     },
     {
@@ -20,10 +20,6 @@
     },
     {
       "name": "@semantic-release/git",
-      "type": "build"
-    },
-    {
-      "name": "@semantic-release/gitlab",
       "type": "build"
     },
     {
@@ -40,31 +36,21 @@
     },
     {
       "name": "@types/node",
-      "version": "^18",
+      "version": "^20",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^5",
-      "type": "build"
-    },
-    {
-      "name": "aws-cdk-lib",
-      "version": "2.92.0",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "cdk-nag",
-      "type": "build"
-    },
-    {
-      "name": "constructs",
-      "version": "10.2.55",
       "type": "build"
     },
     {
@@ -73,10 +59,6 @@
     },
     {
       "name": "eslint-config-prettier",
-      "type": "build"
-    },
-    {
-      "name": "eslint-import-resolver-node",
       "type": "build"
     },
     {
@@ -119,17 +101,12 @@
     },
     {
       "name": "jsii-rosetta",
-      "version": "~5.0.0",
+      "version": "~5.4.0",
       "type": "build"
     },
     {
       "name": "jsii",
-      "version": "~5.0.0",
-      "type": "build"
-    },
-    {
-      "name": "npm-check-updates",
-      "version": "^16",
+      "version": "~5.4.0",
       "type": "build"
     },
     {
@@ -138,11 +115,15 @@
     },
     {
       "name": "projen",
-      "version": "0.71.148",
+      "version": "0.82.4",
       "type": "build"
     },
     {
       "name": "semantic-release",
+      "type": "build"
+    },
+    {
+      "name": "source-map-support",
       "type": "build"
     },
     {
@@ -180,12 +161,12 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.92.0",
+      "version": "^2.144.0",
       "type": "peer"
     },
     {
       "name": "constructs",
-      "version": "^10.2.55",
+      "version": "^10.3.0",
       "type": "peer"
     }
   ],
