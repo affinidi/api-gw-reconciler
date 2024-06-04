@@ -227,7 +227,7 @@ new JsonFile(project, '.releaserc.json', {
 })
 
 const security: JobCallingReusableWorkflow = {
-  uses: 'affinidi/pipeline-security/.github/workflows/security-scanners.yml@feat/check-inherit',
+  uses: 'affinidi/pipeline-security/.github/workflows/security-scanners.yml',
   with: { 'config-path': '.github/labeler.yml' },
   secrets: 'inherit',
   permissions: {
