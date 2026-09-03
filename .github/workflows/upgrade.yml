@@ -13,6 +13,7 @@ jobs:
       contents: read
     outputs:
       patch_created: ${{ steps.create_patch.outputs.patch_created }}
+      has_new_deps: ${{ steps.age_gate.outputs.has_new_deps }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,6 +38,11 @@ jobs:
           name: .repo.patch
           path: .repo.patch
           overwrite: true
+      - name: Age-gate brand-new dependencies (SEC-3901)
+        id: age_gate
+        env:
+          BASE_REF: HEAD
+        run: node scripts/check-upgrade-age.mjs
   pr:
     name: Create Pull Request
     needs: upgrade
@@ -75,7 +81,7 @@ jobs:
             *Automatically created by projen via the "upgrade" workflow*
           branch: github-actions/upgrade
           title: "chore(deps): upgrade dependencies"
-          labels: auto-approve
+          labels: ${{ needs.upgrade.outputs.has_new_deps == 'true' && '' || 'auto-approve' }}
           body: |-
             Upgrades project dependencies. See details in [workflow run].
 

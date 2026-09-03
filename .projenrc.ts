@@ -1,4 +1,4 @@
-import { javascript, awscdk, JsonFile } from 'projen'
+import { javascript, awscdk, JsonFile, JsonPatch } from 'projen'
 import { Job, JobCallingReusableWorkflow, JobPermission } from 'projen/lib/github/workflows-model'
 import { NpmAccess } from 'projen/lib/javascript'
 import { TrailingComma } from 'projen/lib/javascript/prettier'
@@ -248,5 +248,37 @@ security_workflow.on({
 security_workflow.addJobs({ security })
 
 project.github?.addDependabot()
+
+// SEC-3901: age-gate the auto-approved dependency upgrade PR. projen's `upgrade`
+// workflow opens a PR labelled `auto-approve`, so a dependency version published
+// minutes ago would be approved with no human looking at it. Add a step to the
+// upgrade job that flags any direct dependency bumped to a version younger than
+// 48h (compromised npm releases are usually pulled within a day or two), and
+// apply the `auto-approve` label only when none are present. Otherwise the PR
+// gets no label, so auto-approve.yml does not fire and a person has to look (the
+// age-gate step logs which dependencies were held). Applying no label, rather
+// than a `needs-review` one, avoids failing PR creation on a label that may not
+// exist. Patched onto the generated workflow so it survives `npx projen`.
+const upgradeWorkflow = project.github?.tryFindWorkflow('upgrade')
+if (!upgradeWorkflow?.file) {
+  throw new Error('SEC-3901: could not find the generated `upgrade` workflow to patch')
+}
+upgradeWorkflow.file.patch(
+  // Expose the gate result as a job output the `pr` job reads.
+  JsonPatch.add('/jobs/upgrade/outputs/has_new_deps', '${{ steps.age_gate.outputs.has_new_deps }}'),
+  // Run the age check after `projen upgrade` has bumped package.json. BASE_REF is
+  // HEAD because the job checks out the branch and upgrades the working tree.
+  JsonPatch.add('/jobs/upgrade/steps/-', {
+    name: 'Age-gate brand-new dependencies (SEC-3901)',
+    id: 'age_gate',
+    env: { BASE_REF: 'HEAD' },
+    run: 'node scripts/check-upgrade-age.mjs',
+  }),
+  // Withhold auto-approve when a brand-new dependency is present.
+  JsonPatch.replace(
+    '/jobs/pr/steps/4/with/labels',
+    "${{ needs.upgrade.outputs.has_new_deps == 'true' && '' || 'auto-approve' }}",
+  ),
+)
 
 project.synth()
